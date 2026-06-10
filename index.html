@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Script de Diagnóstico Comercial — Agência Lopes</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #72D943;
+    --green-dark: #4db825;
+    --green-light: #edfbe4;
+    --green-mid: #c8f0ac;
+    --green-border: #b3e890;
+    --bg: #f5f7f3;
+    --surface: #ffffff;
+    --surface2: #f0f4ed;
+    --border: #dde8d5;
+    --border-strong: #c4d9b5;
+    --text: #1a2214;
+    --text2: #3d4f33;
+    --muted: #7a9068;
+    --muted-light: #a8bf96;
+    --orange: #e8750a;
+    --orange-bg: #fff4e8;
+    --orange-border: #f5c484;
+    --yellow: #c9920a;
+    --yellow-bg: #fffae8;
+    --yellow-border: #f5d984;
+    --blue: #1a6fb0;
+    --blue-bg: #e8f3ff;
+    --blue-border: #a0c8f0;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR NAV */
+  .layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    width: 240px;
+    background: var(--text);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 28px 0 40px;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    flex-shrink: 0;
+  }
+
+  .sidebar-logo {
+    padding: 0 24px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 20px;
+  }
+
+  .sidebar-logo-mark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: #222;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 800;
+    color: #f5f2eb;
+    letter-spacing: -0.05em;
+    position: relative;
+    overflow: visible;
+  }
+
+  .logo-bar {
+    width: 4px;
+    height: 22px;
+    background: var(--green);
+    border-radius: 2px;
+    margin-left: -2px;
+  }
+
+  .logo-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+  }
+
+  .logo-text span {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .sidebar-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    padding: 0 24px;
+    margin-bottom: 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+    text-decoration: none;
+  }
+
+  .nav-item:hover {
+    background: rgba(255,255,255,0.05);
+    border-left-color: rgba(114,217,67,0.4);
+  }
+
+  .nav-item.active {
+    background: rgba(114,217,67,0.1);
+    border-left-color: var(--green);
+  }
+
+  .nav-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    flex-shrink: 0;
+  }
+
+  .nav-item.active .nav-num {
+    background: var(--green);
+    color: var(--text);
+  }
+
+  .nav-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.3;
+  }
+
+  .nav-item.active .nav-label {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .nav-time {
+    margin-left: auto;
+    font-size: 10px;
+    color: rgba(255,255,255,0.2);
+    white-space: nowrap;
+  }
+
+  .nav-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+    margin: 12px 24px;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px 24px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .sidebar-footer p {
+    font-size: 10px;
+    color: rgba(255,255,255,0.2);
+    line-height: 1.5;
+  }
+
+  /* MAIN CONTENT */
+  .main {
+    margin-left: 240px;
+    flex: 1;
+    padding: 40px 40px 80px;
+    max-width: calc(100% - 240px);
+  }
+
+  /* TOP HEADER */
+  .top-header {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 36px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .top-header-left h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.15;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .top-header-left h1 em {
+    font-style: normal;
+    color: var(--green-dark);
+  }
+
+  .top-header-left p {
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.6;
+  }
+
+  .header-pills {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: var(--green-light);
+    color: var(--green-dark);
+    border: 1px solid var(--green-border);
+  }
+
+  .pill.neutral {
+    background: var(--surface2);
+    color: var(--muted);
+    border-color: var(--border);
+  }
+
+  .header-badge {
+    background: var(--green-light);
+    border: 1px solid var(--green-border);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    text-align: center;
+    min-width: 120px;
+    flex-shrink: 0;
+  }
+
+  .header-badge .badge-num {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--green-dark);
+    line-height: 1;
+  }
+
+  .header-badge .badge-label {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 4px;
+  }
+
+  /* ALERT BOX */
+  .alert-box {
+    background: var(--green-light);
+    border: 1px solid var(--green-border);
+    border-left: 4px solid var(--green);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .alert-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .alert-box p {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.65;
+  }
+
+  .alert-box strong {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  /* PHASE SECTION */
+  .phase-section {
+    margin-bottom: 32px;
+    scroll-margin-top: 24px;
+  }
+
+  .phase-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .phase-card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface2);
+  }
+
+  .phase-badge {
+    background: var(--green);
+    color: var(--text);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .phase-badge.bonus {
+    background: var(--text);
+    color: var(--green);
+  }
+
+  .phase-card-header-text h2 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .phase-card-header-text p {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    font-weight: 500;
+  }
+
+  .phase-timer {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--green-light);
+    border: 1px solid var(--green-border);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--green-dark);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .phase-body {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* SCRIPT CARD */
+  .script-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .script-card-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .type-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 4px;
+  }
+
+  .tag-fala    { background: var(--green-light); color: var(--green-dark); border: 1px solid var(--green-border); }
+  .tag-objetivo { background: #e8f4e8; color: #2a7a2a; border: 1px solid #b0d8b0; }
+  .tag-atencao { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+
+  .script-card-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .script-card-body {
+    padding: 14px 16px;
+  }
+
+  .script-card-body p {
+    font-size: 13.5px;
+    color: var(--text2);
+    line-height: 1.72;
+  }
+
+  .script-card-body strong { color: var(--text); font-weight: 700; }
+  .script-card-body em { color: var(--green-dark); font-style: normal; font-weight: 600; }
+
+  /* QUESTION LIST */
+  .question-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .question-list li {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 13px 16px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .question-list li:hover {
+    border-color: var(--green-border);
+    box-shadow: 0 2px 8px rgba(114,217,67,0.12);
+  }
+
+  .q-num {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--green-dark);
+    background: var(--green-light);
+    border: 1px solid var(--green-border);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .q-text {
+    font-size: 13.5px;
+    color: var(--text2);
+    line-height: 1.65;
+    flex: 1;
+  }
+
+  .q-text em {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .q-tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 8px;
+    vertical-align: middle;
+    background: var(--orange-bg);
+    color: var(--orange);
+    border: 1px solid var(--orange-border);
+  }
+
+  .q-tag.gold {
+    background: var(--yellow-bg);
+    color: var(--yellow);
+    border-color: var(--yellow-border);
+  }
+
+  .q-tag.green {
+    background: var(--green-light);
+    color: var(--green-dark);
+    border-color: var(--green-border);
+  }
+
+  /* GAP TABLE */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead th {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  tbody td {
+    border-bottom: 1px solid var(--border);
+    padding: 13px 16px;
+    vertical-align: middle;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr:hover td {
+    background: var(--green-light);
+  }
+
+  .badge-impacto {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+  }
+
+  .b-alto   { background: #ffe8e8; color: #c0220e; border: 1px solid #f5c0b8; }
+  .b-medio  { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow-border); }
+  .b-baixo  { background: var(--green-light); color: var(--green-dark); border: 1px solid var(--green-border); }
+
+  /* PITCH BOX */
+  .pitch-box {
+    background: linear-gradient(135deg, var(--green-light) 0%, #fff 80%);
+    border: 1px solid var(--green-border);
+    border-left: 4px solid var(--green);
+    border-radius: var(--radius-sm);
+    padding: 20px 22px;
+  }
+
+  .pitch-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green-dark);
+    margin-bottom: 12px;
+  }
+
+  .pitch-box p {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.78;
+    font-style: italic;
+  }
+
+  .pitch-box p strong {
+    color: var(--text);
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  /* CLOSE STEPS */
+  .close-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .close-step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    transition: border-color 0.15s;
+  }
+
+  .close-step:hover {
+    border-color: var(--green-border);
+  }
+
+  .step-num {
+    width: 28px;
+    height: 28px;
+    background: var(--green);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  .step-text {
+    font-size: 13.5px;
+    color: var(--text2);
+    line-height: 1.65;
+  }
+
+  .step-text strong {
+    display: block;
+    color: var(--text);
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 3px;
+  }
+
+  /* OBJECTIONS */
+  .objection-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .objection-q {
+    padding: 13px 16px;
+    background: var(--yellow-bg);
+    border-bottom: 1px solid var(--yellow-border);
+    font-size: 13px;
+    color: #7a5500;
+    font-weight: 600;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .objection-a {
+    padding: 14px 16px;
+    font-size: 13.5px;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+
+  .objection-a strong {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  /* DIVIDER */
+  .section-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 0 32px;
+  }
+
+  /* FOOTER */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .footer-brand {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .footer-brand span { color: var(--green-dark); }
+
+  .footer-note {
+    font-size: 11px;
+    color: var(--muted-light);
+  }
+
+  /* PROGRESS TRACKER */
+  .progress-bar-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 24px;
+    margin-bottom: 28px;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .progress-label span {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .progress-label strong {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--green-dark);
+  }
+
+  .progress-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--green-dark), var(--green));
+    border-radius: 10px;
+    width: 0%;
+    transition: width 0.5s ease;
+  }
+
+  .progress-steps {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .progress-step-btn {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .progress-step-btn.done {
+    background: var(--green-light);
+    color: var(--green-dark);
+    border-color: var(--green-border);
+  }
+
+  .progress-step-btn.active {
+    background: var(--green);
+    color: var(--text);
+    border-color: var(--green);
+    font-weight: 700;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; max-width: 100%; padding: 20px 16px 60px; }
+    .top-header { flex-direction: column; }
+    .header-badge { width: 100%; text-align: left; display: flex; align-items: center; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-mark">
+        <div style="display:flex;align-items:center;gap:0;">
+          <div class="logo-icon">gl</div>
+          <div class="logo-bar"></div>
+        </div>
+        <div class="logo-text">
+          Agência Lopes
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-label">Diagnóstico</div>
+
+    <a class="nav-item active" href="#fase00" onclick="setActive(this)">
+      <div class="nav-num">0</div>
+      <div class="nav-label">Abertura</div>
+      <span class="nav-time">3–5 min</span>
+    </a>
+    <a class="nav-item" href="#fase01" onclick="setActive(this)">
+      <div class="nav-num">1</div>
+      <div class="nav-label">Contexto da Clínica</div>
+      <span class="nav-time">5–8 min</span>
+    </a>
+    <a class="nav-item" href="#fase02" onclick="setActive(this)">
+      <div class="nav-num">2</div>
+      <div class="nav-label">Geração de Demanda</div>
+      <span class="nav-time">8–10 min</span>
+    </a>
+    <a class="nav-item" href="#fase03" onclick="setActive(this)">
+      <div class="nav-num">3</div>
+      <div class="nav-label">Atendimento & Conversão</div>
+      <span class="nav-time">8–10 min</span>
+    </a>
+    <a class="nav-item" href="#fase04" onclick="setActive(this)">
+      <div class="nav-num">4</div>
+      <div class="nav-label">Retenção & Recorrência</div>
+      <span class="nav-time">5 min</span>
+    </a>
+    <a class="nav-item" href="#fase05" onclick="setActive(this)">
+      <div class="nav-num">5</div>
+      <div class="nav-label">Diagnóstico ao Vivo</div>
+      <span class="nav-time">5–8 min</span>
+    </a>
+    <a class="nav-item" href="#fase06" onclick="setActive(this)">
+      <div class="nav-num">6</div>
+      <div class="nav-label">Pitch & Fechamento</div>
+      <span class="nav-time">5 min</span>
+    </a>
+
+    <div class="nav-divider"></div>
+    <div class="sidebar-label">Suporte</div>
+
+    <a class="nav-item" href="#objections" onclick="setActive(this)">
+      <div class="nav-num" style="background:rgba(114,217,67,0.15);color:#72D943;">!</div>
+      <div class="nav-label">Objeções + Respostas</div>
+    </a>
+
+    <div class="sidebar-footer">
+      <p>Script de Diagnóstico v1.0<br>Uso interno · Agência Lopes</p>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- TOP HEADER -->
+    <div class="top-header">
+      <div class="top-header-left">
+        <h1>Script de <em>Diagnóstico</em> Comercial</h1>
+        <p>Roteiro completo para reunião de diagnóstico com clínicas médicas. Use como guia de conversa — ouça mais do que fala.</p>
+        <div class="header-pills">
+          <span class="pill">⏱ 30–40 minutos</span>
+          <span class="pill">🏥 Foco: Psiquiatria Particular</span>
+          <span class="pill neutral">19 perguntas estruturadas</span>
+          <span class="pill neutral">4 objeções mapeadas</span>
+        </div>
+      </div>
+      <div class="header-badge">
+        <div class="badge-num">7</div>
+        <div class="badge-label">Fases</div>
+      </div>
+    </div>
+
+    <!-- ALERT -->
+    <div class="alert-box">
+      <span class="alert-icon">💡</span>
+      <p><strong>Antes de entrar na reunião:</strong> Pesquise o Google Meu Negócio da clínica, o Instagram (se tiver) e teste o tempo de resposta pelo WhatsApp mandando uma mensagem simples. Você vai entrar com dados reais da clínica — isso gera autoridade imediata e separa você de qualquer outro fornecedor.</p>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="progress-bar-wrap" id="progressWrap">
+      <div class="progress-label">
+        <span>Progresso da reunião</span>
+        <strong id="progressText">0 / 7 fases</strong>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-steps" id="progressSteps">
+        <button class="progress-step-btn active" onclick="markPhase(0)">Abertura</button>
+        <button class="progress-step-btn" onclick="markPhase(1)">Contexto</button>
+        <button class="progress-step-btn" onclick="markPhase(2)">Demanda</button>
+        <button class="progress-step-btn" onclick="markPhase(3)">Conversão</button>
+        <button class="progress-step-btn" onclick="markPhase(4)">Retenção</button>
+        <button class="progress-step-btn" onclick="markPhase(5)">Diagnóstico</button>
+        <button class="progress-step-btn" onclick="markPhase(6)">Fechamento</button>
+      </div>
+    </div>
+
+    <!-- FASE 00 -->
+    <div class="phase-section" id="fase00">
+      <div class="phase-card">
+        <div class="phase-card-header">
+          <div class="phase-badge">FASE 00</div>
+          <div class="phase-card-header-text">
+            <h2>Abertura e Posicionamento</h2>
+            <p>Tom de consultoria — não de venda. Desative a guarda logo de início.</p>
+          </div>
+          <div class="phase-timer">⏱ 3–5 min</div>
+        </div>
+        <div class="phase-body">
+          <div class="script-card">
+            <div class="script-card-top">
+              <span class="type-tag tag-fala">Fala</span>
+              <span class="script-card-label">Como abrir a reunião</span>
+            </div>
+            <div class="script-card-body">
+              <p>"Dr(a). [Nome], muito obrigado pelo tempo. Antes de qualquer coisa, quero deixar claro o objetivo dessa conversa: <strong>não estou aqui pra te vender nada agora.</strong> Estou aqui pra entender como funciona o comercial da clínica hoje, onde estão os pontos de perda de pacientes, e se fizer sentido — mostrar o que poderíamos construir juntos. Pode ser?"</p>
+            </div>
+          </div>
+          <div class="script-card">
+            <div class="script-card-top">
+              <span class="type-tag tag-objetivo">Por que funciona</span>
+              <span class="script-card-label">Lógica por trás</span>
+            </div>
+            <div class="script-card-body">
+              <p>Essa abertura <strong>desativa a guarda</strong> do médico ou gestor. Ele já foi abordado por dezenas de fornecedores. Ao dizer que não vai vender, você inverte a dinâmica — agora ele quer saber o que você tem a dizer.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 01 -->
+    <div class="phase-section" id="fase01">
+      <div class="phase-card">
+        <div class="phase-card-header">
+          <div class="phase-badge">FASE 01</div>
+          <div class="phase-card-header-text">
+            <h2>Entendendo o Contexto da Clínica</h2>
+            <p>Ouça mais do que fala — esse é o momento de mapeamento.</p>
+          </div>
+          <div class="phase-timer">⏱ 5–8 min</div>
+        </div>
+        <div class="phase-body">
+          <ul class="question-list">
+            <li>
+              <div class="q-num">1</div>
+              <div class="q-text">Há quanto tempo a clínica está no mercado? E você, há quanto tempo está à frente da gestão? <span class="q-tag">contexto</span></div>
+            </li>
+            <li>
+              <div class="q-num">2</div>
+              <div class="q-text">Quais são as especialidades que a clínica oferece hoje? <em>Qual delas você enxerga como o maior potencial de crescimento?</em> <span class="q-tag gold">abre o ouro</span></div>
+            </li>
+            <li>
+              <div class="q-num">3</div>
+              <div class="q-text">Como está a divisão hoje: a maioria dos pacientes vem por convênio ou particular? Tem uma ideia de porcentagem?</div>
+            </li>
+            <li>
+              <div class="q-num">4</div>
+              <div class="q-text">Qual é o ticket médio de uma consulta particular hoje? <em>(Se não souber, não force — anote para levantar depois)</em></div>
+            </li>
+            <li>
+              <div class="q-num">5</div>
+              <div class="q-text">Tem algum objetivo de crescimento definido pra esse ano? Dobrar consultas, aumentar particular, abrir novo consultório...? <span class="q-tag gold">meta real</span></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 02 -->
+    <div class="phase-section" id="fase02">
+      <div class="phase-card">
+        <div class="phase-card-header">
+          <div class="phase-badge">FASE 02</div>
+          <div class="phase-card-header-text">
+            <h2>Como os Pacientes Chegam Hoje</h2>
+            <p>Aqui estão os maiores gaps — preste atenção nas respostas.</p>
+          </div>
+          <div class="phase-timer">⏱ 8–10 min</div>
+        </div>
+        <div class="phase-body">
+          <ul class="question-list">
+            <li>
+              <div class="q-num">6</div>
+              <div class="q-text">Se eu te pedir pra chutar: de onde vem a maioria dos seus novos pacientes hoje? Indicação, Google, Instagram, convênio, outro?</div>
+            </li>
+            <li>
+              <div class="q-num">7</div>
+              <div class="q-text">A clínica tem presença no Google? Sabe se aparece quando alguém pesquisa <em>"psiquiatra em [cidade]"</em>? <span class="q-tag green">digital</span></div>
+            </li>
+            <li>
+              <div class="q-num">8</div>
+              <div class="q-text">Tem Instagram ou redes sociais ativas? Quem cuida disso hoje — equipe interna ou terceirizado?</div>
+            </li>
+            <li>
+              <div class="q-num">9</div>
+              <div class="q-text">A clínica já investiu em tráfego pago — anúncio no Instagram ou Google? Se sim, qual foi o resultado?</div>
+            </li>
+            <li>
+              <div class="q-num">10</div>
+              <div class="q-text">Tem site? Quando foi a última vez que foi atualizado? <em>(Faça isso de forma casual, não como checklist)</em></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 03 -->
+    <div class="phase-section" id="fase03">
+      <div class="phase-card">
+        <div class="phase-card-header">
+          <div class="phase-badge">FASE 03</div>
+          <div class="phase-card-header-text">
+            <h2>Atendimento e Conversão de Leads</h2>
+            <p>Onde a maioria das clínicas perde dinheiro todo dia sem perceber.</p>
+          </div>
+          <div class="phase-timer">⏱ 8–10 min</div>
+        </div>
+        <div class="phase-body">
+          <ul class="question-list">
+            <li>
+              <div class="q-num">11</div>
+              <div class="q-text">Quando alguém manda mensagem no WhatsApp da clínica, quem responde? Em quanto tempo, em média? <span class="q-tag gold">ponto crítico</span></div>
+            </li>
+            <li>
+              <div class="q-num">12</div>
+              <div class="q-text">Fora do horário comercial — final de semana, à noite — tem alguém respondendo? Ou a mensagem fica até o próximo dia útil?</div>
+            </li>
+            <li>
+              <div class="q-num">13</div>
+              <div class="q-text">Quando alguém pergunta o valor da consulta, como a equipe costuma responder? Existe algum script definido? <span class="q-tag">conversão</span></div>
+            </li>
+            <li>
+              <div class="q-num">14</div>
+              <div class="q-text">Tem ideia de quantas pessoas entram em contato por semana mas <em>não chegam a agendar</em>? Essa informação é acompanhada de alguma forma?</div>
+            </li>
+            <li>
+              <div class="q-num">15</div>
+              <div class="q-text">Como funciona o agendamento hoje? WhatsApp manual, sistema, telefone? Tem alguma dificuldade nesse processo?</div>
+            </li>
+          </ul>
+          <div class="script-card">
+            <div class="script-card-top">
+              <span class="type-tag tag-atencao">Atenção</span>
+              <span class="script-card-label">Como usar essas respostas</span>
+            </div>
+            <div class="script-card-body">
+              <p>Se a resposta for <strong>"responde quando dá"</strong> ou <strong>"não sei quantos não agendam"</strong> — você achou o maior gap. <em style="color:var(--muted);font-style:italic;">Não resolva ainda. Anote, confirme o entendimento, e guarde para o diagnóstico.</em> O desconforto de ver o problema é o que abre espaço para a solução.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 04 -->
+    <div class="phase-section" id="fase04">
+      <div class="phase-card">
+        <div class="phase-card-header">
+          <div class="phase-badge">FASE 04</div>
+          <div class="phase-card-header-text">
+            <h2>Retenção e Relacionamento com Pacientes</h2>
+            <p>Ouro escondido na base atual — receita dormindo esperando ser ativada.</p>
+          </div>
+          <div class="phase-timer">⏱ 5 min</div>
+        </div>
+        <div class="phase-body">
+          <ul class="question-list">
+            <li>
+              <div class="q-num">16</div>
+              <div class="q-text">Depois que o paciente consulta, existe algum acompanhamento? Lembrete de retorno, pesquisa de satisfação, algo assim?</div>
+            </li>
+            <li>
+              <div class="q-num">17</div>
+              <div class="q-text">Tem algum paciente que fez consulta, sumiu, e nunca voltou? Existe alguma ação pra reativar essa base? <span class="q-tag gold">receita dormindo</span></div>
+            </li>
+            <li>
+              <div class="q-num">18</div>
+              <div class="q-text">A clínica costuma pedir avaliação no Google para os pacientes satisfeitos? Quantas avaliações tem hoje? <em>(Você já sabe a resposta — isso cria um espelho)</em></div>
+            </li>
+            <li>
+              <div class="q-num">19</div>
+              <div class="q-text">Se um paciente indica um amigo, tem algum tipo de reconhecimento ou benefício por isso? Existe um programa de indicação?</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 05 -->
+    <div class="phase-section" id="fase05">
+      <div class="phase-card">
+        <div class="phase-card-header">
+          <div class="phase-badge">FASE 05</div>
+          <div class="phase-card-header-text">
+            <h2>Entregando o Diagnóstico em Tempo Real</h2>
+            <p>Aqui você vira o especialista — mostre o que coletou.</p>
+          </div>
+          <div class="phase-timer">⏱ 5–8 min</div>
+        </div>
+        <div class="phase-body">
+          <div class="script-card">
+            <div class="script-card-top">
+              <span class="type-tag tag-fala">Fala</span>
+              <span class="script-card-label">Como apresentar o diagnóstico</span>
+            </div>
+            <div class="script-card-body">
+              <p>"Posso te dar um retorno sobre o que eu estou vendo? Com base no que você me contou, <strong>a clínica tem pelo menos [X] pontos de perda de pacientes ativos.</strong> Deixa eu te mostrar onde."</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Gap Identificado</th>
+                  <th>Impacto</th>
+                  <th>Solução Agência Lopes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>WhatsApp sem resposta rápida ou fora do horário</td>
+                  <td><span class="badge-impacto b-alto">ALTO</span></td>
+                  <td>Agente de IA 24h com qualificação automática</td>
+                </tr>
+                <tr>
+                  <td>Sem script de atendimento para consulta particular</td>
+                  <td><span class="badge-impacto b-alto">ALTO</span></td>
+                  <td>Script + treinamento da atendente</td>
+                </tr>
+                <tr>
+                  <td>Google Meu Negócio desatualizado ou sem fotos</td>
+                  <td><span class="badge-impacto b-alto">ALTO</span></td>
+                  <td>Otimização imediata + estratégia de avaliações</td>
+                </tr>
+                <tr>
+                  <td>Sem presença digital ativa (Instagram / conteúdo)</td>
+                  <td><span class="badge-impacto b-medio">MÉDIO</span></td>
+                  <td>Calendário de conteúdo + carrosséis mensais</td>
+                </tr>
+                <tr>
+                  <td>Sem tráfego pago direcionado para particular</td>
+                  <td><span class="badge-impacto b-medio">MÉDIO</span></td>
+                  <td>Meta Ads com ângulos de psiquiatria / saúde mental</td>
+                </tr>
+                <tr>
+                  <td>Sem follow-up ou reativação de base de pacientes</td>
+                  <td><span class="badge-impacto b-medio">MÉDIO</span></td>
+                  <td>Fluxo automático de reativação via WhatsApp</td>
+                </tr>
+                <tr>
+                  <td>Sem programa de indicação estruturado</td>
+                  <td><span class="badge-impacto b-baixo">BAIXO</span></td>
+                  <td>Programa simples de indicação com incentivo</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 06 -->
+    <div class="phase-section" id="fase06">
+      <div class="phase-card">
+        <div class="phase-card-header">
+          <div class="phase-badge">FASE 06</div>
+          <div class="phase-card-header-text">
+            <h2>Pitch do Número + Fechamento</h2>
+            <p>Transforme o gap identificado em argumento financeiro concreto.</p>
+          </div>
+          <div class="phase-timer">⏱ 5 min</div>
+        </div>
+        <div class="phase-body">
+          <div class="pitch-box">
+            <div class="pitch-label">⚡ Pitch do número — use exatamente assim</div>
+            <p>"Dr(a), uma clínica de psiquiatria que hoje converte <strong>4 consultas particulares a mais por semana</strong> — no valor de R$300 cada — está gerando <strong>R$4.800 por mês adicional</strong>. Em um ano, isso é quase <strong>R$58.000</strong>. Tudo isso já existe na sua base de leads que hoje está sendo perdida. O meu serviço custa R$597 por mês. A pergunta não é se faz sentido — é quando a gente começa."</p>
+          </div>
+          <div class="close-steps">
+            <div class="close-step">
+              <div class="step-num">1</div>
+              <div class="step-text">
+                <strong>Pergunte a dor principal</strong>
+                "De tudo que a gente conversou, qual ponto mais te incomoda hoje — o que mais você sente que está deixando dinheiro na mesa?"
+              </div>
+            </div>
+            <div class="close-step">
+              <div class="step-num">2</div>
+              <div class="step-text">
+                <strong>Confirme o entendimento</strong>
+                "Então se eu resolver [dor citada] nos primeiros 30 dias, você já sente que valeu o investimento — é isso?"
+              </div>
+            </div>
+            <div class="close-step">
+              <div class="step-num">3</div>
+              <div class="step-text">
+                <strong>Apresente a oferta de entrada</strong>
+                "A forma que eu trabalho é assim: a gente começa pela implementação — estruturo o comercial, ativo o agente de IA no WhatsApp e configuro tudo. Depois disso é o recorrente mensal pra manter e otimizar. Faz sentido a gente definir uma data pra começar?"
+              </div>
+            </div>
+            <div class="close-step">
+              <div class="step-num">4</div>
+              <div class="step-text">
+                <strong>Se pedir prazo para pensar</strong>
+                "Claro, sem problema. Só uma coisa: enquanto a gente não começa, o WhatsApp continua sem resposta e os leads continuam sumindo. Você quer que eu te mande uma proposta formal até amanhã?"
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBJEÇÕES -->
+    <div class="phase-section" id="objections">
+      <div class="phase-card">
+        <div class="phase-card-header">
+          <div class="phase-badge bonus">BÔNUS</div>
+          <div class="phase-card-header-text">
+            <h2>Objeções Mais Comuns + Respostas</h2>
+            <p>Estude antes de entrar na reunião — não improvise nessas horas.</p>
+          </div>
+        </div>
+        <div class="phase-body">
+          <div class="objection-card">
+            <div class="objection-q">💬 "Já tentei marketing antes e não funcionou."</div>
+            <div class="objection-a">"Entendo. Na maioria dos casos que eu vejo, o que não funcionou foi impulsionar post sem estratégia comercial por trás. O que eu faço é diferente: a gente estrutura <strong>primeiro o processo de conversão</strong> — o WhatsApp, o atendimento, o script — e só depois acelera com tráfego. Não adianta encher o balde furado."</div>
+          </div>
+          <div class="objection-card">
+            <div class="objection-q">💬 "Não tenho tempo pra me envolver nisso agora."</div>
+            <div class="objection-a">"É exatamente por isso que faz sentido. Eu estruturo tudo. <strong>A sua parte é mínima</strong> — você aprova os textos, me apresenta a recepcionista em 1 reunião de 30 minutos, e eu cuido do resto. Você não precisa de mais uma coisa pra fazer — precisa de alguém que faça por você."</div>
+          </div>
+          <div class="objection-card">
+            <div class="objection-q">💬 "Está caro. Não sei se tenho esse orçamento."</div>
+            <div class="objection-a">"Entendo a preocupação. Mas deixa eu te fazer uma pergunta: se você <strong>não perder mais 4 pacientes particulares por mês</strong> — que hoje somem porque ninguém responde a tempo — você já cobre o investimento e ainda sobra. O que está mais caro: pagar R$597/mês, ou continuar perdendo esses pacientes todo mês?"</div>
+          </div>
+          <div class="objection-card">
+            <div class="objection-q">💬 "Vou falar com meu sócio / minha equipe primeiro."</div>
+            <div class="objection-a">"Faz todo sentido. Posso te mandar uma proposta resumida que você repassa pra ele(a)? Assim fica mais fácil de avaliar juntos. <strong>Qual o melhor e-mail ou WhatsApp pra eu enviar ainda hoje?</strong>"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div class="footer">
+      <div class="footer-brand">Agência <span>Lopes</span></div>
+      <div class="footer-note">Uso interno · Script de Diagnóstico v1.1</div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  function setActive(el) {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // Smooth scroll + nav highlight on scroll
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    });
+  });
+
+  // Progress tracker
+  let done = new Array(7).fill(false);
+  let currentActive = 0;
+
+  function markPhase(index) {
+    const btns = document.querySelectorAll('.progress-step-btn');
+    done[index] = !done[index];
+
+    // Mark current as active (next undone)
+    btns.forEach((btn, i) => {
+      btn.classList.remove('active', 'done');
+      if (done[i]) btn.classList.add('done');
+    });
+
+    // Find next not done to highlight
+    let next = -1;
+    for (let i = 0; i < done.length; i++) {
+      if (!done[i]) { next = i; break; }
+    }
+    if (next >= 0) btns[next].classList.add('active');
+
+    const count = done.filter(Boolean).length;
+    document.getElementById('progressText').textContent = count + ' / 7 fases';
+    document.getElementById('progressFill').style.width = (count / 7 * 100) + '%';
+  }
+
+  // Init first button as active
+  document.querySelector('.progress-step-btn').classList.add('active');
+
+  // Intersection observer for sidebar highlight
+  const sections = document.querySelectorAll('.phase-section');
+  const navItems = document.querySelectorAll('.nav-item');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        navItems.forEach(item => {
+          item.classList.remove('active');
+          if (item.getAttribute('href') === '#' + id) {
+            item.classList.add('active');
+          }
+        });
+      }
+    });
+  }, { threshold: 0.4 });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
