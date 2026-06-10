@@ -4,380 +4,626 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Script de Diagnóstico Comercial — Agência Lopes</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --green: #72D943;
-    --green-dark: #4db825;
-    --green-light: #edfbe4;
-    --green-mid: #c8f0ac;
-    --green-border: #b3e890;
-    --bg: #f5f7f3;
-    --surface: #ffffff;
-    --surface2: #f0f4ed;
-    --border: #dde8d5;
-    --border-strong: #c4d9b5;
-    --text: #1a2214;
-    --text2: #3d4f33;
-    --muted: #7a9068;
-    --muted-light: #a8bf96;
-    --orange: #e8750a;
-    --orange-bg: #fff4e8;
-    --orange-border: #f5c484;
-    --yellow: #c9920a;
-    --yellow-bg: #fffae8;
-    --yellow-border: #f5d984;
-    --blue: #1a6fb0;
-    --blue-bg: #e8f3ff;
-    --blue-border: #a0c8f0;
-    --radius: 10px;
-    --radius-sm: 6px;
+    --green-bright: #93F262;
+    --green-deep: #4DB825;
+    --green-dim: rgba(114, 217, 67, 0.10);
+    --green-dim-2: rgba(114, 217, 67, 0.16);
+    --green-border: rgba(114, 217, 67, 0.30);
+    --green-glow: rgba(114, 217, 67, 0.25);
+
+    --bg: #0A0C09;
+    --surface: #11140E;
+    --surface-2: #161B12;
+    --elevated: #1C2217;
+    --border: #252C1E;
+    --border-strong: #344028;
+
+    --text: #EEF3E8;
+    --text-2: #C6D0BB;
+    --muted: #8C987F;
+    --faint: #5A664E;
+
+    --red: #FF6B52;
+    --red-bg: rgba(255, 107, 82, 0.10);
+    --red-border: rgba(255, 107, 82, 0.32);
+    --amber: #FFC247;
+    --amber-bg: rgba(255, 194, 71, 0.10);
+    --amber-border: rgba(255, 194, 71, 0.32);
+    --blue: #5CB8FF;
+    --blue-bg: rgba(92, 184, 255, 0.10);
+    --blue-border: rgba(92, 184, 255, 0.32);
+    --coral: #FF9D6B;
+    --coral-bg: rgba(255, 157, 107, 0.10);
+    --coral-border: rgba(255, 157, 107, 0.32);
+
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Barlow', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --radius: 16px;
+    --radius-sm: 11px;
+    --radius-xs: 7px;
+
+    --shadow-md: 0 4px 18px rgba(0,0,0,0.45);
+    --shadow-lg: 0 14px 44px rgba(0,0,0,0.55);
+
+    --t-fast: 150ms ease-out;
+    --t-base: 250ms ease-out;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  html { scroll-behavior: smooth; }
+
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Poppins', sans-serif;
-    font-size: 14px;
+    font-family: var(--font-body);
+    font-size: 15px;
     line-height: 1.65;
-    min-height: 100vh;
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* SIDEBAR NAV */
-  .layout {
-    display: flex;
-    min-height: 100vh;
+  ::selection { background: var(--green); color: #0A0C09; }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 5px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--faint); }
+
+  :focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 
-  .sidebar {
-    width: 240px;
-    background: var(--text);
+  /* ===== BACKGROUND DECOR ===== */
+  .bg-decor {
     position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 900px 520px at 75% -8%, rgba(114,217,67,0.07), transparent 60%),
+      radial-gradient(ellipse 700px 500px at -10% 40%, rgba(114,217,67,0.04), transparent 60%);
+  }
+
+  .bg-grid {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image: radial-gradient(rgba(238,243,232,0.025) 1px, transparent 1px);
+    background-size: 26px 26px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent 70%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent 70%);
+  }
+
+  .layout { display: flex; min-height: 100dvh; position: relative; z-index: 1; }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: 264px;
+    background: rgba(13, 16, 10, 0.92);
+    backdrop-filter: blur(12px);
+    border-right: 1px solid var(--border);
+    position: fixed;
+    top: 0; left: 0;
+    height: 100dvh;
     overflow-y: auto;
-    padding: 28px 0 40px;
+    padding: 30px 0 28px;
     display: flex;
     flex-direction: column;
     z-index: 100;
-    flex-shrink: 0;
   }
 
   .sidebar-logo {
-    padding: 0 24px 28px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    margin-bottom: 20px;
+    padding: 0 26px 26px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 22px;
   }
 
-  .sidebar-logo-mark {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+  .sidebar-logo-mark { display: flex; align-items: center; gap: 12px; }
 
   .logo-icon {
-    width: 36px;
-    height: 36px;
-    background: #222;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    font-weight: 800;
-    color: #f5f2eb;
+    width: 40px; height: 40px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 16px; font-weight: 700;
+    color: var(--text);
     letter-spacing: -0.05em;
     position: relative;
-    overflow: visible;
   }
 
-  .logo-bar {
-    width: 4px;
-    height: 22px;
+  .logo-icon::after {
+    content: '';
+    position: absolute;
+    right: -1px; top: 8px; bottom: 8px;
+    width: 3px;
     background: var(--green);
     border-radius: 2px;
-    margin-left: -2px;
+    box-shadow: 0 0 10px var(--green-glow);
   }
 
   .logo-text {
-    font-size: 13px;
-    font-weight: 700;
-    color: #fff;
+    font-family: var(--font-display);
+    font-size: 15px; font-weight: 700;
+    color: var(--text);
     line-height: 1.2;
   }
 
   .logo-text span {
     display: block;
-    font-size: 10px;
-    font-weight: 400;
-    color: rgba(255,255,255,0.4);
+    font-family: var(--font-mono);
+    font-size: 9px; font-weight: 400;
+    color: var(--muted);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.16em;
+    margin-top: 3px;
   }
 
   .sidebar-label {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
+    font-family: var(--font-mono);
+    font-size: 9px; font-weight: 600;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.25);
-    padding: 0 24px;
-    margin-bottom: 8px;
+    color: var(--faint);
+    padding: 0 26px;
+    margin-bottom: 10px;
   }
 
   .nav-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 24px;
+    padding: 11px 26px 11px 23px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: background var(--t-fast), border-color var(--t-fast);
     border-left: 3px solid transparent;
     text-decoration: none;
+    min-height: 44px;
   }
 
-  .nav-item:hover {
-    background: rgba(255,255,255,0.05);
-    border-left-color: rgba(114,217,67,0.4);
-  }
+  .nav-item:hover { background: rgba(114,217,67,0.05); border-left-color: var(--green-border); }
 
   .nav-item.active {
-    background: rgba(114,217,67,0.1);
+    background: var(--green-dim);
     border-left-color: var(--green);
   }
 
   .nav-num {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: 700;
-    color: rgba(255,255,255,0.4);
+    width: 24px; height: 24px;
+    border-radius: 7px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 10px; font-weight: 600;
+    color: var(--muted);
     flex-shrink: 0;
+    transition: all var(--t-fast);
   }
 
   .nav-item.active .nav-num {
     background: var(--green);
-    color: var(--text);
+    border-color: var(--green);
+    color: #0A0C09;
+    box-shadow: 0 0 12px var(--green-glow);
   }
 
   .nav-label {
-    font-size: 12px;
-    font-weight: 500;
-    color: rgba(255,255,255,0.55);
+    font-size: 13px; font-weight: 500;
+    color: var(--muted);
     line-height: 1.3;
+    transition: color var(--t-fast);
   }
 
-  .nav-item.active .nav-label {
-    color: #fff;
-    font-weight: 600;
-  }
+  .nav-item:hover .nav-label { color: var(--text-2); }
+  .nav-item.active .nav-label { color: var(--text); font-weight: 600; }
 
   .nav-time {
     margin-left: auto;
-    font-size: 10px;
-    color: rgba(255,255,255,0.2);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--faint);
     white-space: nowrap;
   }
 
-  .nav-divider {
-    height: 1px;
-    background: rgba(255,255,255,0.06);
-    margin: 12px 24px;
-  }
+  .nav-divider { height: 1px; background: var(--border); margin: 14px 26px; }
 
   .sidebar-footer {
     margin-top: auto;
-    padding: 16px 24px 0;
-    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 18px 26px 0;
+    border-top: 1px solid var(--border);
   }
 
   .sidebar-footer p {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--faint);
+    line-height: 1.7;
+    letter-spacing: 0.04em;
+  }
+
+  /* ===== MOBILE BAR ===== */
+  .mobile-bar {
+    display: none;
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    background: rgba(10, 12, 9, 0.94);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 18px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .mobile-bar .logo-text { font-size: 14px; }
+
+  .mobile-count {
+    font-family: var(--font-mono);
     font-size: 10px;
-    color: rgba(255,255,255,0.2);
-    line-height: 1.5;
+    color: var(--green);
+    background: var(--green-dim);
+    border: 1px solid var(--green-border);
+    padding: 5px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
   }
 
-  /* MAIN CONTENT */
+  /* ===== MAIN ===== */
   .main {
-    margin-left: 240px;
+    margin-left: 264px;
     flex: 1;
-    padding: 40px 40px 80px;
-    max-width: calc(100% - 240px);
+    padding: 52px 48px 90px;
+    max-width: calc(100% - 264px);
   }
 
-  /* TOP HEADER */
-  .top-header {
+  .content { max-width: 920px; margin: 0 auto; }
+
+  /* ===== REVEAL ANIMATION ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 500ms ease-out, transform 500ms ease-out;
+  }
+
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ===== HERO ===== */
+  .hero { margin-bottom: 30px; }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-family: var(--font-mono);
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 18px;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green-glow);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 4.5vw, 44px);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    color: var(--text);
+    margin-bottom: 14px;
+    max-width: 700px;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--green);
+    text-shadow: 0 0 28px var(--green-glow);
+  }
+
+  .hero > p {
+    font-size: 16px;
+    color: var(--text-2);
+    max-width: 560px;
+    line-height: 1.7;
+    font-weight: 400;
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 30px;
+  }
+
+  .stat-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 32px 36px;
-    margin-bottom: 28px;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 24px;
+    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color var(--t-base), transform var(--t-base);
   }
 
-  .top-header-left h1 {
-    font-size: 26px;
-    font-weight: 800;
-    color: var(--text);
-    line-height: 1.15;
-    margin-bottom: 8px;
+  .stat-card:hover { border-color: var(--green-border); transform: translateY(-2px); }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--green), transparent 70%);
+    opacity: 0.55;
+  }
+
+  .stat-num {
+    font-family: var(--font-mono);
+    font-size: 26px; font-weight: 700;
+    color: var(--green);
+    line-height: 1;
     letter-spacing: -0.02em;
   }
 
-  .top-header-left h1 em {
-    font-style: normal;
-    color: var(--green-dark);
-  }
-
-  .top-header-left p {
-    font-size: 13px;
+  .stat-label {
+    font-size: 11px;
+    font-weight: 600;
     color: var(--muted);
-    max-width: 480px;
-    line-height: 1.6;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 7px;
   }
 
-  .header-pills {
+  /* ===== PREP ALERT ===== */
+  .prep-card {
+    background: linear-gradient(135deg, var(--green-dim) 0%, var(--surface) 55%);
+    border: 1px solid var(--green-border);
+    border-radius: var(--radius);
+    padding: 22px 26px;
+    margin-bottom: 26px;
     display: flex;
-    gap: 10px;
+    gap: 18px;
+    align-items: flex-start;
+  }
+
+  .prep-icon {
+    width: 42px; height: 42px;
+    background: var(--green-dim-2);
+    border: 1px solid var(--green-border);
+    border-radius: var(--radius-xs);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    color: var(--green);
+  }
+
+  .prep-icon svg { width: 20px; height: 20px; }
+
+  .prep-text h3 {
+    font-family: var(--font-display);
+    font-size: 15px; font-weight: 700;
+    color: var(--text);
+    margin-bottom: 5px;
+  }
+
+  .prep-text p {
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.7;
+  }
+
+  .prep-text strong { color: var(--green-bright); font-weight: 600; }
+
+  /* ===== PROGRESS ===== */
+  .progress-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 26px;
+    margin-bottom: 40px;
+  }
+
+  .progress-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .progress-title {
+    font-family: var(--font-mono);
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .progress-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .progress-count {
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 600;
+    color: var(--green);
+  }
+
+  .reset-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    color: var(--muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all var(--t-fast);
+    min-height: 30px;
+  }
+
+  .reset-btn:hover { color: var(--text); border-color: var(--border-strong); }
+  .reset-btn svg { width: 12px; height: 12px; }
+
+  .progress-track {
+    height: 7px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--green-deep), var(--green));
+    border-radius: 10px;
+    width: 0%;
+    transition: width 500ms ease-out;
+    box-shadow: 0 0 12px var(--green-glow);
+  }
+
+  .progress-steps {
+    display: flex;
+    gap: 7px;
     margin-top: 16px;
     flex-wrap: wrap;
   }
 
-  .pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 5px 12px;
+  .progress-step-btn {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    padding: 7px 15px;
     border-radius: 20px;
-    background: var(--green-light);
-    color: var(--green-dark);
-    border: 1px solid var(--green-border);
-  }
-
-  .pill.neutral {
-    background: var(--surface2);
+    border: 1px solid var(--border);
+    background: var(--surface-2);
     color: var(--muted);
-    border-color: var(--border);
+    cursor: pointer;
+    transition: all var(--t-fast);
+    min-height: 32px;
   }
 
-  .header-badge {
-    background: var(--green-light);
-    border: 1px solid var(--green-border);
-    border-radius: var(--radius-sm);
-    padding: 16px 20px;
-    text-align: center;
-    min-width: 120px;
-    flex-shrink: 0;
+  .progress-step-btn:hover { border-color: var(--green-border); color: var(--text-2); }
+
+  .progress-step-btn.done {
+    background: var(--green-dim);
+    color: var(--green);
+    border-color: var(--green-border);
   }
 
-  .header-badge .badge-num {
-    font-size: 32px;
-    font-weight: 800;
-    color: var(--green-dark);
-    line-height: 1;
-  }
+  .progress-step-btn.done::before { content: '✓ '; }
 
-  .header-badge .badge-label {
-    font-size: 10px;
-    color: var(--muted);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-top: 4px;
-  }
-
-  /* ALERT BOX */
-  .alert-box {
-    background: var(--green-light);
-    border: 1px solid var(--green-border);
-    border-left: 4px solid var(--green);
-    border-radius: var(--radius-sm);
-    padding: 16px 20px;
-    margin-bottom: 28px;
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-  }
-
-  .alert-icon {
-    font-size: 18px;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  .alert-box p {
-    font-size: 13px;
-    color: var(--text2);
-    line-height: 1.65;
-  }
-
-  .alert-box strong {
-    color: var(--text);
+  .progress-step-btn.active {
+    background: var(--green);
+    color: #0A0C09;
+    border-color: var(--green);
     font-weight: 700;
+    box-shadow: 0 0 14px var(--green-glow);
   }
 
-  /* PHASE SECTION */
-  .phase-section {
-    margin-bottom: 32px;
-    scroll-margin-top: 24px;
-  }
+  /* ===== PHASE SECTION ===== */
+  .phase-section { margin-bottom: 34px; scroll-margin-top: 28px; }
 
   .phase-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
+    transition: border-color var(--t-base);
   }
 
+  .phase-card:hover { border-color: var(--border-strong); }
+
   .phase-card-header {
-    padding: 20px 24px;
+    padding: 24px 28px;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
-    gap: 16px;
-    background: var(--surface2);
+    gap: 18px;
+    background: var(--surface-2);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .phase-ghost {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-display);
+    font-size: 86px; font-weight: 700;
+    color: rgba(114, 217, 67, 0.055);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -0.04em;
   }
 
   .phase-badge {
     background: var(--green);
-    color: var(--text);
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    padding: 4px 10px;
-    border-radius: 4px;
+    color: #0A0C09;
+    font-family: var(--font-mono);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 6px 12px;
+    border-radius: var(--radius-xs);
     white-space: nowrap;
+    box-shadow: 0 0 16px var(--green-glow);
+    flex-shrink: 0;
   }
 
   .phase-badge.bonus {
-    background: var(--text);
+    background: var(--elevated);
     color: var(--green);
+    border: 1px solid var(--green-border);
+    box-shadow: none;
   }
 
+  .phase-card-header-text { position: relative; z-index: 1; }
+
   .phase-card-header-text h2 {
-    font-size: 15px;
-    font-weight: 700;
+    font-family: var(--font-display);
+    font-size: 18px; font-weight: 700;
     color: var(--text);
     line-height: 1.2;
+    letter-spacing: -0.01em;
   }
 
   .phase-card-header-text p {
-    font-size: 11px;
+    font-size: 12.5px;
     color: var(--muted);
-    margin-top: 2px;
+    margin-top: 4px;
     font-weight: 500;
   }
 
@@ -385,174 +631,216 @@
     margin-left: auto;
     display: flex;
     align-items: center;
-    gap: 6px;
-    background: var(--green-light);
+    gap: 7px;
+    background: var(--green-dim);
     border: 1px solid var(--green-border);
-    padding: 5px 12px;
+    padding: 7px 14px;
     border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--green-dark);
+    font-family: var(--font-mono);
+    font-size: 10px; font-weight: 600;
+    color: var(--green);
     white-space: nowrap;
     flex-shrink: 0;
+    position: relative;
+    z-index: 1;
   }
+
+  .phase-timer svg { width: 12px; height: 12px; }
 
   .phase-body {
-    padding: 20px 24px;
+    padding: 24px 28px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
   }
 
-  /* SCRIPT CARD */
+  /* ===== SCRIPT CARD ===== */
   .script-card {
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     overflow: hidden;
+    background: var(--surface-2);
   }
 
   .script-card-top {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 9px 16px;
-    background: var(--surface2);
+    gap: 12px;
+    padding: 11px 18px;
+    background: var(--elevated);
     border-bottom: 1px solid var(--border);
   }
 
   .type-tag {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 4px;
+    padding: 5px 11px;
+    border-radius: var(--radius-xs);
   }
 
-  .tag-fala    { background: var(--green-light); color: var(--green-dark); border: 1px solid var(--green-border); }
-  .tag-objetivo { background: #e8f4e8; color: #2a7a2a; border: 1px solid #b0d8b0; }
-  .tag-atencao { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+  .type-tag svg { width: 11px; height: 11px; }
+
+  .tag-fala     { background: var(--green-dim-2); color: var(--green); border: 1px solid var(--green-border); }
+  .tag-objetivo { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+  .tag-atencao  { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
 
   .script-card-label {
-    font-size: 11px;
+    font-size: 11.5px;
     color: var(--muted);
     font-weight: 600;
   }
 
-  .script-card-body {
-    padding: 14px 16px;
+  .script-card-body { padding: 18px 20px; position: relative; }
+
+  .script-card.is-fala .script-card-body { padding-left: 46px; }
+
+  .script-card.is-fala .script-card-body::before {
+    content: '“';
+    position: absolute;
+    left: 14px; top: 6px;
+    font-family: var(--font-display);
+    font-size: 44px; font-weight: 700;
+    color: var(--green);
+    opacity: 0.5;
+    line-height: 1;
   }
 
   .script-card-body p {
-    font-size: 13.5px;
-    color: var(--text2);
-    line-height: 1.72;
+    font-size: 14.5px;
+    color: var(--text-2);
+    line-height: 1.75;
   }
 
   .script-card-body strong { color: var(--text); font-weight: 700; }
-  .script-card-body em { color: var(--green-dark); font-style: normal; font-weight: 600; }
+  .script-card-body em { color: var(--green-bright); font-style: normal; font-weight: 600; }
+  .script-card-body .nota { color: var(--muted); font-style: italic; font-weight: 400; }
 
-  /* QUESTION LIST */
+  /* ===== QUESTION LIST ===== */
   .question-list {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 9px;
   }
 
-  .question-list li {
-    background: var(--surface);
+  .q-item {
+    background: var(--surface-2);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: 13px 16px;
+    padding: 14px 18px 14px 14px;
     display: flex;
     gap: 14px;
     align-items: flex-start;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition: border-color var(--t-fast), background var(--t-fast), transform var(--t-fast);
+    cursor: pointer;
   }
 
-  .question-list li:hover {
+  .q-item:hover {
     border-color: var(--green-border);
-    box-shadow: 0 2px 8px rgba(114,217,67,0.12);
+    transform: translateX(3px);
+  }
+
+  .q-check {
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-strong);
+    background: var(--surface);
+    flex-shrink: 0;
+    margin-top: 1px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: transparent;
+    transition: all var(--t-fast);
+    padding: 0;
+  }
+
+  .q-check svg { width: 14px; height: 14px; }
+
+  .q-item:hover .q-check { border-color: var(--green); }
+
+  .q-item.asked { background: var(--surface); }
+
+  .q-item.asked .q-check {
+    background: var(--green);
+    border-color: var(--green);
+    color: #0A0C09;
+    box-shadow: 0 0 10px var(--green-glow);
   }
 
   .q-num {
-    font-size: 11px;
-    font-weight: 800;
-    color: var(--green-dark);
-    background: var(--green-light);
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 700;
+    color: var(--green);
+    background: var(--green-dim);
     border: 1px solid var(--green-border);
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    min-width: 28px; height: 28px;
+    padding: 0 4px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
-    margin-top: 1px;
   }
+
+  .q-item.asked .q-num { opacity: 0.45; }
 
   .q-text {
-    font-size: 13.5px;
-    color: var(--text2);
+    font-size: 14.5px;
+    color: var(--text-2);
     line-height: 1.65;
     flex: 1;
+    transition: opacity var(--t-fast);
   }
 
-  .q-text em {
-    color: var(--muted);
-    font-style: italic;
-  }
+  .q-item.asked .q-text { opacity: 0.5; }
+
+  .q-text em { color: var(--muted); font-style: italic; }
 
   .q-tag {
     display: inline-flex;
     align-items: center;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    font-family: var(--font-mono);
+    font-size: 8.5px; font-weight: 700;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 2px 8px;
+    padding: 3px 9px;
     border-radius: 10px;
     margin-left: 8px;
     vertical-align: middle;
-    background: var(--orange-bg);
-    color: var(--orange);
-    border: 1px solid var(--orange-border);
+    background: var(--coral-bg);
+    color: var(--coral);
+    border: 1px solid var(--coral-border);
+    white-space: nowrap;
   }
 
-  .q-tag.gold {
-    background: var(--yellow-bg);
-    color: var(--yellow);
-    border-color: var(--yellow-border);
-  }
+  .q-tag.gold { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-border); }
+  .q-tag.green { background: var(--green-dim); color: var(--green); border-color: var(--green-border); }
 
-  .q-tag.green {
-    background: var(--green-light);
-    color: var(--green-dark);
-    border-color: var(--green-border);
-  }
-
-  /* GAP TABLE */
+  /* ===== TABLE ===== */
   .table-wrap {
     overflow-x: auto;
     border-radius: var(--radius-sm);
     border: 1px solid var(--border);
+    background: var(--surface-2);
   }
 
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 13px;
+    font-size: 13.5px;
   }
 
   thead th {
-    background: var(--surface2);
+    background: var(--elevated);
     border-bottom: 1px solid var(--border);
-    padding: 11px 16px;
+    padding: 13px 18px;
     text-align: left;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
+    font-family: var(--font-mono);
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--muted);
     white-space: nowrap;
@@ -560,393 +848,428 @@
 
   tbody td {
     border-bottom: 1px solid var(--border);
-    padding: 13px 16px;
+    padding: 14px 18px;
     vertical-align: middle;
-    color: var(--text2);
-    line-height: 1.5;
+    color: var(--text-2);
+    line-height: 1.55;
   }
 
-  tbody tr:last-child td {
-    border-bottom: none;
-  }
-
-  tbody tr:hover td {
-    background: var(--green-light);
-  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr { transition: background var(--t-fast); }
+  tbody tr:hover td { background: var(--green-dim); }
 
   .badge-impacto {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 4px;
-    letter-spacing: 0.06em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 9px; font-weight: 700;
+    padding: 4px 11px;
+    border-radius: var(--radius-xs);
+    letter-spacing: 0.1em;
+    white-space: nowrap;
   }
 
-  .b-alto   { background: #ffe8e8; color: #c0220e; border: 1px solid #f5c0b8; }
-  .b-medio  { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow-border); }
-  .b-baixo  { background: var(--green-light); color: var(--green-dark); border: 1px solid var(--green-border); }
+  .badge-impacto::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
 
-  /* PITCH BOX */
+  .b-alto  { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+  .b-medio { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .b-baixo { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+
+  /* ===== PITCH BOX ===== */
   .pitch-box {
-    background: linear-gradient(135deg, var(--green-light) 0%, #fff 80%);
+    background: linear-gradient(140deg, var(--green-dim-2) 0%, var(--surface-2) 50%);
     border: 1px solid var(--green-border);
-    border-left: 4px solid var(--green);
     border-radius: var(--radius-sm);
-    padding: 20px 22px;
+    padding: 26px 28px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 1px 0 rgba(114,217,67,0.12), 0 0 36px rgba(114,217,67,0.06);
+  }
+
+  .pitch-box::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--green), var(--green-deep));
+    box-shadow: 0 0 14px var(--green-glow);
   }
 
   .pitch-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--green-dark);
-    margin-bottom: 12px;
+    color: var(--green);
+    margin-bottom: 14px;
   }
 
+  .pitch-label svg { width: 13px; height: 13px; }
+
   .pitch-box p {
-    font-size: 14px;
-    color: var(--text2);
-    line-height: 1.78;
+    font-size: 15.5px;
+    color: var(--text-2);
+    line-height: 1.85;
     font-style: italic;
   }
 
   .pitch-box p strong {
-    color: var(--text);
+    color: var(--green-bright);
     font-style: normal;
     font-weight: 700;
   }
 
-  /* CLOSE STEPS */
+  /* ===== CLOSE STEPS ===== */
   .close-steps {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0;
+    position: relative;
   }
 
   .close-step {
     display: flex;
-    gap: 14px;
+    gap: 16px;
     align-items: flex-start;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px 16px;
-    transition: border-color 0.15s;
+    padding: 14px 0;
+    position: relative;
   }
 
-  .close-step:hover {
-    border-color: var(--green-border);
+  .close-step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 48px;
+    bottom: -6px;
+    width: 1.5px;
+    background: linear-gradient(to bottom, var(--green-border), var(--border));
   }
 
   .step-num {
-    width: 28px;
-    height: 28px;
+    width: 31px; height: 31px;
     background: var(--green);
-    color: var(--text);
-    font-size: 12px;
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
+    color: #0A0C09;
+    font-family: var(--font-mono);
+    font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 9px;
     flex-shrink: 0;
+    box-shadow: 0 0 14px var(--green-glow);
+    position: relative;
+    z-index: 1;
   }
 
-  .step-text {
-    font-size: 13.5px;
-    color: var(--text2);
-    line-height: 1.65;
+  .step-card {
+    flex: 1;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    transition: border-color var(--t-fast);
   }
 
-  .step-text strong {
+  .close-step:hover .step-card { border-color: var(--green-border); }
+
+  .step-card strong {
     display: block;
+    font-family: var(--font-display);
     color: var(--text);
-    font-weight: 700;
-    font-size: 13px;
-    margin-bottom: 3px;
+    font-weight: 600;
+    font-size: 13.5px;
+    margin-bottom: 4px;
   }
 
-  /* OBJECTIONS */
+  .step-card span {
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.65;
+    display: block;
+  }
+
+  /* ===== OBJECTIONS ===== */
   .objection-card {
-    background: var(--surface);
+    background: var(--surface-2);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     overflow: hidden;
+    transition: border-color var(--t-fast);
   }
 
+  .objection-card:hover { border-color: var(--border-strong); }
+
   .objection-q {
-    padding: 13px 16px;
-    background: var(--yellow-bg);
-    border-bottom: 1px solid var(--yellow-border);
-    font-size: 13px;
-    color: #7a5500;
+    padding: 14px 18px;
+    background: var(--red-bg);
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text);
     font-weight: 600;
     display: flex;
-    gap: 10px;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .obj-chip {
+    font-family: var(--font-mono);
+    font-size: 8.5px; font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 4px 10px;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  .obj-chip.obj { background: rgba(255,107,82,0.16); color: var(--red); border: 1px solid var(--red-border); }
+  .obj-chip.resp { background: var(--green-dim-2); color: var(--green); border: 1px solid var(--green-border); }
+
+  .objection-a {
+    padding: 15px 18px;
+    font-size: 14.5px;
+    color: var(--text-2);
+    line-height: 1.75;
+    display: flex;
+    gap: 12px;
     align-items: flex-start;
   }
 
-  .objection-a {
-    padding: 14px 16px;
-    font-size: 13.5px;
-    color: var(--text2);
-    line-height: 1.7;
-  }
+  .objection-a .obj-chip { margin-top: 3px; }
+  .objection-a strong { color: var(--green-bright); font-weight: 700; }
 
-  .objection-a strong {
-    color: var(--text);
-    font-weight: 700;
-  }
-
-  /* DIVIDER */
-  .section-divider {
-    height: 1px;
-    background: var(--border);
-    margin: 0 0 32px;
-  }
-
-  /* FOOTER */
+  /* ===== FOOTER ===== */
   .footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 24px;
+    padding-top: 28px;
+    margin-top: 12px;
     border-top: 1px solid var(--border);
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
   }
 
   .footer-brand {
-    font-size: 12px;
-    font-weight: 700;
+    font-family: var(--font-display);
+    font-size: 13px; font-weight: 700;
     color: var(--muted);
   }
 
-  .footer-brand span { color: var(--green-dark); }
+  .footer-brand span { color: var(--green); }
 
   .footer-note {
-    font-size: 11px;
-    color: var(--muted-light);
-  }
-
-  /* PROGRESS TRACKER */
-  .progress-bar-wrap {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px 24px;
-    margin-bottom: 28px;
-  }
-
-  .progress-label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
-  .progress-label span {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  .progress-label strong {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--green-dark);
-  }
-
-  .progress-track {
-    height: 6px;
-    background: var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(to right, var(--green-dark), var(--green));
-    border-radius: 10px;
-    width: 0%;
-    transition: width 0.5s ease;
-  }
-
-  .progress-steps {
-    display: flex;
-    gap: 6px;
-    margin-top: 12px;
-    flex-wrap: wrap;
-  }
-
-  .progress-step-btn {
+    font-family: var(--font-mono);
     font-size: 10px;
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    background: var(--surface2);
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.15s;
+    color: var(--faint);
+    letter-spacing: 0.06em;
   }
 
-  .progress-step-btn.done {
-    background: var(--green-light);
-    color: var(--green-dark);
-    border-color: var(--green-border);
+  /* ===== REDUCED MOTION ===== */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .reveal { opacity: 1; transform: none; }
   }
 
-  .progress-step-btn.active {
-    background: var(--green);
-    color: var(--text);
-    border-color: var(--green);
-    font-weight: 700;
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1080px) {
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
   }
 
-  /* RESPONSIVE */
-  @media (max-width: 768px) {
+  @media (max-width: 880px) {
     .sidebar { display: none; }
-    .main { margin-left: 0; max-width: 100%; padding: 20px 16px 60px; }
-    .top-header { flex-direction: column; }
-    .header-badge { width: 100%; text-align: left; display: flex; align-items: center; gap: 16px; }
+    .mobile-bar { display: flex; }
+    .main { margin-left: 0; max-width: 100%; padding: 26px 18px 70px; }
+    .phase-card-header { flex-wrap: wrap; padding: 20px; }
+    .phase-timer { margin-left: 0; }
+    .phase-ghost { display: none; }
+    .phase-body { padding: 20px; }
+    .hero h1 { font-size: 30px; }
+  }
+
+  @media (max-width: 480px) {
+    .hero-stats { grid-template-columns: repeat(2, 1fr); gap: 9px; }
+    .stat-card { padding: 14px 16px; }
+    .stat-num { font-size: 21px; }
+    .script-card.is-fala .script-card-body { padding-left: 20px; }
+    .script-card.is-fala .script-card-body::before { display: none; }
   }
 </style>
 </head>
 <body>
+
+<div class="bg-decor" aria-hidden="true"></div>
+<div class="bg-grid" aria-hidden="true"></div>
+
 <div class="layout">
 
   <!-- SIDEBAR -->
-  <nav class="sidebar">
+  <nav class="sidebar" aria-label="Navegação do roteiro">
     <div class="sidebar-logo">
       <div class="sidebar-logo-mark">
-        <div style="display:flex;align-items:center;gap:0;">
-          <div class="logo-icon">gl</div>
-          <div class="logo-bar"></div>
-        </div>
+        <div class="logo-icon">gl</div>
         <div class="logo-text">
           Agência Lopes
+          <span>Diagnóstico Comercial</span>
         </div>
       </div>
     </div>
 
-    <div class="sidebar-label">Diagnóstico</div>
+    <div class="sidebar-label">Roteiro</div>
 
-    <a class="nav-item active" href="#fase00" onclick="setActive(this)">
+    <a class="nav-item active" href="#fase00">
       <div class="nav-num">0</div>
       <div class="nav-label">Abertura</div>
       <span class="nav-time">3–5 min</span>
     </a>
-    <a class="nav-item" href="#fase01" onclick="setActive(this)">
+    <a class="nav-item" href="#fase01">
       <div class="nav-num">1</div>
       <div class="nav-label">Contexto da Clínica</div>
       <span class="nav-time">5–8 min</span>
     </a>
-    <a class="nav-item" href="#fase02" onclick="setActive(this)">
+    <a class="nav-item" href="#fase02">
       <div class="nav-num">2</div>
       <div class="nav-label">Geração de Demanda</div>
       <span class="nav-time">8–10 min</span>
     </a>
-    <a class="nav-item" href="#fase03" onclick="setActive(this)">
+    <a class="nav-item" href="#fase03">
       <div class="nav-num">3</div>
-      <div class="nav-label">Atendimento & Conversão</div>
+      <div class="nav-label">Atendimento &amp; Conversão</div>
       <span class="nav-time">8–10 min</span>
     </a>
-    <a class="nav-item" href="#fase04" onclick="setActive(this)">
+    <a class="nav-item" href="#fase04">
       <div class="nav-num">4</div>
-      <div class="nav-label">Retenção & Recorrência</div>
+      <div class="nav-label">Retenção &amp; Recorrência</div>
       <span class="nav-time">5 min</span>
     </a>
-    <a class="nav-item" href="#fase05" onclick="setActive(this)">
+    <a class="nav-item" href="#fase05">
       <div class="nav-num">5</div>
       <div class="nav-label">Diagnóstico ao Vivo</div>
       <span class="nav-time">5–8 min</span>
     </a>
-    <a class="nav-item" href="#fase06" onclick="setActive(this)">
+    <a class="nav-item" href="#fase06">
       <div class="nav-num">6</div>
-      <div class="nav-label">Pitch & Fechamento</div>
+      <div class="nav-label">Pitch &amp; Fechamento</div>
       <span class="nav-time">5 min</span>
     </a>
 
     <div class="nav-divider"></div>
     <div class="sidebar-label">Suporte</div>
 
-    <a class="nav-item" href="#objections" onclick="setActive(this)">
-      <div class="nav-num" style="background:rgba(114,217,67,0.15);color:#72D943;">!</div>
+    <a class="nav-item" href="#objections">
+      <div class="nav-num">!</div>
       <div class="nav-label">Objeções + Respostas</div>
     </a>
 
     <div class="sidebar-footer">
-      <p>Script de Diagnóstico v1.0<br>Uso interno · Agência Lopes</p>
+      <p>SCRIPT DE DIAGNÓSTICO V2.0<br>USO INTERNO · AGÊNCIA LOPES</p>
     </div>
   </nav>
 
   <!-- MAIN -->
   <main class="main">
+    <div class="content">
 
-    <!-- TOP HEADER -->
-    <div class="top-header">
-      <div class="top-header-left">
-        <h1>Script de <em>Diagnóstico</em> Comercial</h1>
-        <p>Roteiro completo para reunião de diagnóstico com clínicas médicas. Use como guia de conversa — ouça mais do que fala.</p>
-        <div class="header-pills">
-          <span class="pill">⏱ 30–40 minutos</span>
-          <span class="pill">🏥 Foco: Psiquiatria Particular</span>
-          <span class="pill neutral">19 perguntas estruturadas</span>
-          <span class="pill neutral">4 objeções mapeadas</span>
+    <!-- MOBILE BAR -->
+    <header class="mobile-bar">
+      <div class="logo-text">Agência Lopes<span style="display:block;font-family:var(--font-mono);font-size:8px;color:var(--muted);letter-spacing:0.14em;">DIAGNÓSTICO COMERCIAL</span></div>
+      <div class="mobile-count" id="mobileCount">0/7 fases</div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero reveal">
+      <div class="hero-eyebrow">Uso interno · Equipe comercial</div>
+      <h1>Script de <em>Diagnóstico</em> Comercial</h1>
+      <p>Roteiro completo para reunião de diagnóstico com clínicas médicas. Use como guia de conversa — ouça mais do que fala.</p>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-num">30–40</div>
+          <div class="stat-label">Minutos de reunião</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">07</div>
+          <div class="stat-label">Fases estruturadas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">19</div>
+          <div class="stat-label">Perguntas-chave</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">04</div>
+          <div class="stat-label">Objeções mapeadas</div>
         </div>
       </div>
-      <div class="header-badge">
-        <div class="badge-num">7</div>
-        <div class="badge-label">Fases</div>
-      </div>
-    </div>
+    </section>
 
-    <!-- ALERT -->
-    <div class="alert-box">
-      <span class="alert-icon">💡</span>
-      <p><strong>Antes de entrar na reunião:</strong> Pesquise o Google Meu Negócio da clínica, o Instagram (se tiver) e teste o tempo de resposta pelo WhatsApp mandando uma mensagem simples. Você vai entrar com dados reais da clínica — isso gera autoridade imediata e separa você de qualquer outro fornecedor.</p>
-    </div>
+    <!-- PREP ALERT -->
+    <section class="prep-card reveal">
+      <div class="prep-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+      </div>
+      <div class="prep-text">
+        <h3>Antes de entrar na reunião</h3>
+        <p>Pesquise o Google Meu Negócio da clínica, o Instagram (se tiver) e teste o tempo de resposta pelo WhatsApp mandando uma mensagem simples. Você vai entrar com dados reais da clínica — <strong>isso gera autoridade imediata</strong> e separa você de qualquer outro fornecedor.</p>
+      </div>
+    </section>
 
     <!-- PROGRESS -->
-    <div class="progress-bar-wrap" id="progressWrap">
-      <div class="progress-label">
-        <span>Progresso da reunião</span>
-        <strong id="progressText">0 / 7 fases</strong>
+    <section class="progress-card reveal" id="progressWrap">
+      <div class="progress-head">
+        <span class="progress-title">Progresso da reunião</span>
+        <div class="progress-meta">
+          <span class="progress-count" id="progressText">0/7 fases · 0/19 perguntas</span>
+          <button class="reset-btn" id="resetBtn" type="button" aria-label="Reiniciar progresso">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            Reiniciar
+          </button>
+        </div>
       </div>
       <div class="progress-track">
         <div class="progress-fill" id="progressFill"></div>
       </div>
       <div class="progress-steps" id="progressSteps">
-        <button class="progress-step-btn active" onclick="markPhase(0)">Abertura</button>
-        <button class="progress-step-btn" onclick="markPhase(1)">Contexto</button>
-        <button class="progress-step-btn" onclick="markPhase(2)">Demanda</button>
-        <button class="progress-step-btn" onclick="markPhase(3)">Conversão</button>
-        <button class="progress-step-btn" onclick="markPhase(4)">Retenção</button>
-        <button class="progress-step-btn" onclick="markPhase(5)">Diagnóstico</button>
-        <button class="progress-step-btn" onclick="markPhase(6)">Fechamento</button>
+        <button class="progress-step-btn" type="button" onclick="markPhase(0)">Abertura</button>
+        <button class="progress-step-btn" type="button" onclick="markPhase(1)">Contexto</button>
+        <button class="progress-step-btn" type="button" onclick="markPhase(2)">Demanda</button>
+        <button class="progress-step-btn" type="button" onclick="markPhase(3)">Conversão</button>
+        <button class="progress-step-btn" type="button" onclick="markPhase(4)">Retenção</button>
+        <button class="progress-step-btn" type="button" onclick="markPhase(5)">Diagnóstico</button>
+        <button class="progress-step-btn" type="button" onclick="markPhase(6)">Fechamento</button>
       </div>
-    </div>
+    </section>
 
     <!-- FASE 00 -->
-    <div class="phase-section" id="fase00">
+    <div class="phase-section reveal" id="fase00">
       <div class="phase-card">
         <div class="phase-card-header">
+          <span class="phase-ghost" aria-hidden="true">00</span>
           <div class="phase-badge">FASE 00</div>
           <div class="phase-card-header-text">
             <h2>Abertura e Posicionamento</h2>
             <p>Tom de consultoria — não de venda. Desative a guarda logo de início.</p>
           </div>
-          <div class="phase-timer">⏱ 3–5 min</div>
+          <div class="phase-timer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            3–5 MIN
+          </div>
         </div>
         <div class="phase-body">
-          <div class="script-card">
+          <div class="script-card is-fala">
             <div class="script-card-top">
-              <span class="type-tag tag-fala">Fala</span>
+              <span class="type-tag tag-fala">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+                Fala
+              </span>
               <span class="script-card-label">Como abrir a reunião</span>
             </div>
             <div class="script-card-body">
@@ -955,7 +1278,10 @@
           </div>
           <div class="script-card">
             <div class="script-card-top">
-              <span class="type-tag tag-objetivo">Por que funciona</span>
+              <span class="type-tag tag-objetivo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                Por que funciona
+              </span>
               <span class="script-card-label">Lógica por trás</span>
             </div>
             <div class="script-card-body">
@@ -967,35 +1293,44 @@
     </div>
 
     <!-- FASE 01 -->
-    <div class="phase-section" id="fase01">
+    <div class="phase-section reveal" id="fase01">
       <div class="phase-card">
         <div class="phase-card-header">
+          <span class="phase-ghost" aria-hidden="true">01</span>
           <div class="phase-badge">FASE 01</div>
           <div class="phase-card-header-text">
             <h2>Entendendo o Contexto da Clínica</h2>
             <p>Ouça mais do que fala — esse é o momento de mapeamento.</p>
           </div>
-          <div class="phase-timer">⏱ 5–8 min</div>
+          <div class="phase-timer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            5–8 MIN
+          </div>
         </div>
         <div class="phase-body">
           <ul class="question-list">
-            <li>
+            <li class="q-item" data-q="1">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 1 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">1</div>
               <div class="q-text">Há quanto tempo a clínica está no mercado? E você, há quanto tempo está à frente da gestão? <span class="q-tag">contexto</span></div>
             </li>
-            <li>
+            <li class="q-item" data-q="2">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 2 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">2</div>
               <div class="q-text">Quais são as especialidades que a clínica oferece hoje? <em>Qual delas você enxerga como o maior potencial de crescimento?</em> <span class="q-tag gold">abre o ouro</span></div>
             </li>
-            <li>
+            <li class="q-item" data-q="3">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 3 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">3</div>
               <div class="q-text">Como está a divisão hoje: a maioria dos pacientes vem por convênio ou particular? Tem uma ideia de porcentagem?</div>
             </li>
-            <li>
+            <li class="q-item" data-q="4">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 4 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">4</div>
               <div class="q-text">Qual é o ticket médio de uma consulta particular hoje? <em>(Se não souber, não force — anote para levantar depois)</em></div>
             </li>
-            <li>
+            <li class="q-item" data-q="5">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 5 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">5</div>
               <div class="q-text">Tem algum objetivo de crescimento definido pra esse ano? Dobrar consultas, aumentar particular, abrir novo consultório...? <span class="q-tag gold">meta real</span></div>
             </li>
@@ -1005,35 +1340,44 @@
     </div>
 
     <!-- FASE 02 -->
-    <div class="phase-section" id="fase02">
+    <div class="phase-section reveal" id="fase02">
       <div class="phase-card">
         <div class="phase-card-header">
+          <span class="phase-ghost" aria-hidden="true">02</span>
           <div class="phase-badge">FASE 02</div>
           <div class="phase-card-header-text">
             <h2>Como os Pacientes Chegam Hoje</h2>
             <p>Aqui estão os maiores gaps — preste atenção nas respostas.</p>
           </div>
-          <div class="phase-timer">⏱ 8–10 min</div>
+          <div class="phase-timer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            8–10 MIN
+          </div>
         </div>
         <div class="phase-body">
           <ul class="question-list">
-            <li>
+            <li class="q-item" data-q="6">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 6 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">6</div>
               <div class="q-text">Se eu te pedir pra chutar: de onde vem a maioria dos seus novos pacientes hoje? Indicação, Google, Instagram, convênio, outro?</div>
             </li>
-            <li>
+            <li class="q-item" data-q="7">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 7 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">7</div>
               <div class="q-text">A clínica tem presença no Google? Sabe se aparece quando alguém pesquisa <em>"psiquiatra em [cidade]"</em>? <span class="q-tag green">digital</span></div>
             </li>
-            <li>
+            <li class="q-item" data-q="8">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 8 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">8</div>
               <div class="q-text">Tem Instagram ou redes sociais ativas? Quem cuida disso hoje — equipe interna ou terceirizado?</div>
             </li>
-            <li>
+            <li class="q-item" data-q="9">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 9 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">9</div>
               <div class="q-text">A clínica já investiu em tráfego pago — anúncio no Instagram ou Google? Se sim, qual foi o resultado?</div>
             </li>
-            <li>
+            <li class="q-item" data-q="10">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 10 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">10</div>
               <div class="q-text">Tem site? Quando foi a última vez que foi atualizado? <em>(Faça isso de forma casual, não como checklist)</em></div>
             </li>
@@ -1043,46 +1387,58 @@
     </div>
 
     <!-- FASE 03 -->
-    <div class="phase-section" id="fase03">
+    <div class="phase-section reveal" id="fase03">
       <div class="phase-card">
         <div class="phase-card-header">
+          <span class="phase-ghost" aria-hidden="true">03</span>
           <div class="phase-badge">FASE 03</div>
           <div class="phase-card-header-text">
             <h2>Atendimento e Conversão de Leads</h2>
             <p>Onde a maioria das clínicas perde dinheiro todo dia sem perceber.</p>
           </div>
-          <div class="phase-timer">⏱ 8–10 min</div>
+          <div class="phase-timer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            8–10 MIN
+          </div>
         </div>
         <div class="phase-body">
           <ul class="question-list">
-            <li>
+            <li class="q-item" data-q="11">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 11 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">11</div>
               <div class="q-text">Quando alguém manda mensagem no WhatsApp da clínica, quem responde? Em quanto tempo, em média? <span class="q-tag gold">ponto crítico</span></div>
             </li>
-            <li>
+            <li class="q-item" data-q="12">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 12 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">12</div>
               <div class="q-text">Fora do horário comercial — final de semana, à noite — tem alguém respondendo? Ou a mensagem fica até o próximo dia útil?</div>
             </li>
-            <li>
+            <li class="q-item" data-q="13">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 13 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">13</div>
               <div class="q-text">Quando alguém pergunta o valor da consulta, como a equipe costuma responder? Existe algum script definido? <span class="q-tag">conversão</span></div>
             </li>
-            <li>
+            <li class="q-item" data-q="14">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 14 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">14</div>
               <div class="q-text">Tem ideia de quantas pessoas entram em contato por semana mas <em>não chegam a agendar</em>? Essa informação é acompanhada de alguma forma?</div>
             </li>
-            <li>
+            <li class="q-item" data-q="15">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 15 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">15</div>
               <div class="q-text">Como funciona o agendamento hoje? WhatsApp manual, sistema, telefone? Tem alguma dificuldade nesse processo?</div>
             </li>
           </ul>
           <div class="script-card">
             <div class="script-card-top">
-              <span class="type-tag tag-atencao">Atenção</span>
+              <span class="type-tag tag-atencao">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                Atenção
+              </span>
               <span class="script-card-label">Como usar essas respostas</span>
             </div>
             <div class="script-card-body">
-              <p>Se a resposta for <strong>"responde quando dá"</strong> ou <strong>"não sei quantos não agendam"</strong> — você achou o maior gap. <em style="color:var(--muted);font-style:italic;">Não resolva ainda. Anote, confirme o entendimento, e guarde para o diagnóstico.</em> O desconforto de ver o problema é o que abre espaço para a solução.</p>
+              <p>Se a resposta for <strong>"responde quando dá"</strong> ou <strong>"não sei quantos não agendam"</strong> — você achou o maior gap. <span class="nota">Não resolva ainda. Anote, confirme o entendimento, e guarde para o diagnóstico.</span> O desconforto de ver o problema é o que abre espaço para a solução.</p>
             </div>
           </div>
         </div>
@@ -1090,31 +1446,39 @@
     </div>
 
     <!-- FASE 04 -->
-    <div class="phase-section" id="fase04">
+    <div class="phase-section reveal" id="fase04">
       <div class="phase-card">
         <div class="phase-card-header">
+          <span class="phase-ghost" aria-hidden="true">04</span>
           <div class="phase-badge">FASE 04</div>
           <div class="phase-card-header-text">
             <h2>Retenção e Relacionamento com Pacientes</h2>
             <p>Ouro escondido na base atual — receita dormindo esperando ser ativada.</p>
           </div>
-          <div class="phase-timer">⏱ 5 min</div>
+          <div class="phase-timer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            5 MIN
+          </div>
         </div>
         <div class="phase-body">
           <ul class="question-list">
-            <li>
+            <li class="q-item" data-q="16">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 16 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">16</div>
               <div class="q-text">Depois que o paciente consulta, existe algum acompanhamento? Lembrete de retorno, pesquisa de satisfação, algo assim?</div>
             </li>
-            <li>
+            <li class="q-item" data-q="17">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 17 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">17</div>
               <div class="q-text">Tem algum paciente que fez consulta, sumiu, e nunca voltou? Existe alguma ação pra reativar essa base? <span class="q-tag gold">receita dormindo</span></div>
             </li>
-            <li>
+            <li class="q-item" data-q="18">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 18 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">18</div>
               <div class="q-text">A clínica costuma pedir avaliação no Google para os pacientes satisfeitos? Quantas avaliações tem hoje? <em>(Você já sabe a resposta — isso cria um espelho)</em></div>
             </li>
-            <li>
+            <li class="q-item" data-q="19">
+              <button class="q-check" type="button" aria-label="Marcar pergunta 19 como feita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
               <div class="q-num">19</div>
               <div class="q-text">Se um paciente indica um amigo, tem algum tipo de reconhecimento ou benefício por isso? Existe um programa de indicação?</div>
             </li>
@@ -1124,20 +1488,27 @@
     </div>
 
     <!-- FASE 05 -->
-    <div class="phase-section" id="fase05">
+    <div class="phase-section reveal" id="fase05">
       <div class="phase-card">
         <div class="phase-card-header">
+          <span class="phase-ghost" aria-hidden="true">05</span>
           <div class="phase-badge">FASE 05</div>
           <div class="phase-card-header-text">
             <h2>Entregando o Diagnóstico em Tempo Real</h2>
             <p>Aqui você vira o especialista — mostre o que coletou.</p>
           </div>
-          <div class="phase-timer">⏱ 5–8 min</div>
+          <div class="phase-timer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            5–8 MIN
+          </div>
         </div>
         <div class="phase-body">
-          <div class="script-card">
+          <div class="script-card is-fala">
             <div class="script-card-top">
-              <span class="type-tag tag-fala">Fala</span>
+              <span class="type-tag tag-fala">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+                Fala
+              </span>
               <span class="script-card-label">Como apresentar o diagnóstico</span>
             </div>
             <div class="script-card-body">
@@ -1197,48 +1568,55 @@
     </div>
 
     <!-- FASE 06 -->
-    <div class="phase-section" id="fase06">
+    <div class="phase-section reveal" id="fase06">
       <div class="phase-card">
         <div class="phase-card-header">
+          <span class="phase-ghost" aria-hidden="true">06</span>
           <div class="phase-badge">FASE 06</div>
           <div class="phase-card-header-text">
             <h2>Pitch do Número + Fechamento</h2>
             <p>Transforme o gap identificado em argumento financeiro concreto.</p>
           </div>
-          <div class="phase-timer">⏱ 5 min</div>
+          <div class="phase-timer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            5 MIN
+          </div>
         </div>
         <div class="phase-body">
           <div class="pitch-box">
-            <div class="pitch-label">⚡ Pitch do número — use exatamente assim</div>
+            <div class="pitch-label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+              Pitch do número — use exatamente assim
+            </div>
             <p>"Dr(a), uma clínica de psiquiatria que hoje converte <strong>4 consultas particulares a mais por semana</strong> — no valor de R$300 cada — está gerando <strong>R$4.800 por mês adicional</strong>. Em um ano, isso é quase <strong>R$58.000</strong>. Tudo isso já existe na sua base de leads que hoje está sendo perdida. O meu serviço custa R$597 por mês. A pergunta não é se faz sentido — é quando a gente começa."</p>
           </div>
           <div class="close-steps">
             <div class="close-step">
               <div class="step-num">1</div>
-              <div class="step-text">
+              <div class="step-card">
                 <strong>Pergunte a dor principal</strong>
-                "De tudo que a gente conversou, qual ponto mais te incomoda hoje — o que mais você sente que está deixando dinheiro na mesa?"
+                <span>"De tudo que a gente conversou, qual ponto mais te incomoda hoje — o que mais você sente que está deixando dinheiro na mesa?"</span>
               </div>
             </div>
             <div class="close-step">
               <div class="step-num">2</div>
-              <div class="step-text">
+              <div class="step-card">
                 <strong>Confirme o entendimento</strong>
-                "Então se eu resolver [dor citada] nos primeiros 30 dias, você já sente que valeu o investimento — é isso?"
+                <span>"Então se eu resolver [dor citada] nos primeiros 30 dias, você já sente que valeu o investimento — é isso?"</span>
               </div>
             </div>
             <div class="close-step">
               <div class="step-num">3</div>
-              <div class="step-text">
+              <div class="step-card">
                 <strong>Apresente a oferta de entrada</strong>
-                "A forma que eu trabalho é assim: a gente começa pela implementação — estruturo o comercial, ativo o agente de IA no WhatsApp e configuro tudo. Depois disso é o recorrente mensal pra manter e otimizar. Faz sentido a gente definir uma data pra começar?"
+                <span>"A forma que eu trabalho é assim: a gente começa pela implementação — estruturo o comercial, ativo o agente de IA no WhatsApp e configuro tudo. Depois disso é o recorrente mensal pra manter e otimizar. Faz sentido a gente definir uma data pra começar?"</span>
               </div>
             </div>
             <div class="close-step">
               <div class="step-num">4</div>
-              <div class="step-text">
+              <div class="step-card">
                 <strong>Se pedir prazo para pensar</strong>
-                "Claro, sem problema. Só uma coisa: enquanto a gente não começa, o WhatsApp continua sem resposta e os leads continuam sumindo. Você quer que eu te mande uma proposta formal até amanhã?"
+                <span>"Claro, sem problema. Só uma coisa: enquanto a gente não começa, o WhatsApp continua sem resposta e os leads continuam sumindo. Você quer que eu te mande uma proposta formal até amanhã?"</span>
               </div>
             </div>
           </div>
@@ -1247,9 +1625,10 @@
     </div>
 
     <!-- OBJEÇÕES -->
-    <div class="phase-section" id="objections">
+    <div class="phase-section reveal" id="objections">
       <div class="phase-card">
         <div class="phase-card-header">
+          <span class="phase-ghost" aria-hidden="true">!?</span>
           <div class="phase-badge bonus">BÔNUS</div>
           <div class="phase-card-header-text">
             <h2>Objeções Mais Comuns + Respostas</h2>
@@ -1258,103 +1637,167 @@
         </div>
         <div class="phase-body">
           <div class="objection-card">
-            <div class="objection-q">💬 "Já tentei marketing antes e não funcionou."</div>
-            <div class="objection-a">"Entendo. Na maioria dos casos que eu vejo, o que não funcionou foi impulsionar post sem estratégia comercial por trás. O que eu faço é diferente: a gente estrutura <strong>primeiro o processo de conversão</strong> — o WhatsApp, o atendimento, o script — e só depois acelera com tráfego. Não adianta encher o balde furado."</div>
+            <div class="objection-q">
+              <span class="obj-chip obj">OBJEÇÃO</span>
+              "Já tentei marketing antes e não funcionou."
+            </div>
+            <div class="objection-a">
+              <span class="obj-chip resp">RESPOSTA</span>
+              <span>"Entendo. Na maioria dos casos que eu vejo, o que não funcionou foi impulsionar post sem estratégia comercial por trás. O que eu faço é diferente: a gente estrutura <strong>primeiro o processo de conversão</strong> — o WhatsApp, o atendimento, o script — e só depois acelera com tráfego. Não adianta encher o balde furado."</span>
+            </div>
           </div>
           <div class="objection-card">
-            <div class="objection-q">💬 "Não tenho tempo pra me envolver nisso agora."</div>
-            <div class="objection-a">"É exatamente por isso que faz sentido. Eu estruturo tudo. <strong>A sua parte é mínima</strong> — você aprova os textos, me apresenta a recepcionista em 1 reunião de 30 minutos, e eu cuido do resto. Você não precisa de mais uma coisa pra fazer — precisa de alguém que faça por você."</div>
+            <div class="objection-q">
+              <span class="obj-chip obj">OBJEÇÃO</span>
+              "Não tenho tempo pra me envolver nisso agora."
+            </div>
+            <div class="objection-a">
+              <span class="obj-chip resp">RESPOSTA</span>
+              <span>"É exatamente por isso que faz sentido. Eu estruturo tudo. <strong>A sua parte é mínima</strong> — você aprova os textos, me apresenta a recepcionista em 1 reunião de 30 minutos, e eu cuido do resto. Você não precisa de mais uma coisa pra fazer — precisa de alguém que faça por você."</span>
+            </div>
           </div>
           <div class="objection-card">
-            <div class="objection-q">💬 "Está caro. Não sei se tenho esse orçamento."</div>
-            <div class="objection-a">"Entendo a preocupação. Mas deixa eu te fazer uma pergunta: se você <strong>não perder mais 4 pacientes particulares por mês</strong> — que hoje somem porque ninguém responde a tempo — você já cobre o investimento e ainda sobra. O que está mais caro: pagar R$597/mês, ou continuar perdendo esses pacientes todo mês?"</div>
+            <div class="objection-q">
+              <span class="obj-chip obj">OBJEÇÃO</span>
+              "Está caro. Não sei se tenho esse orçamento."
+            </div>
+            <div class="objection-a">
+              <span class="obj-chip resp">RESPOSTA</span>
+              <span>"Entendo a preocupação. Mas deixa eu te fazer uma pergunta: se você <strong>não perder mais 4 pacientes particulares por mês</strong> — que hoje somem porque ninguém responde a tempo — você já cobre o investimento e ainda sobra. O que está mais caro: pagar R$597/mês, ou continuar perdendo esses pacientes todo mês?"</span>
+            </div>
           </div>
           <div class="objection-card">
-            <div class="objection-q">💬 "Vou falar com meu sócio / minha equipe primeiro."</div>
-            <div class="objection-a">"Faz todo sentido. Posso te mandar uma proposta resumida que você repassa pra ele(a)? Assim fica mais fácil de avaliar juntos. <strong>Qual o melhor e-mail ou WhatsApp pra eu enviar ainda hoje?</strong>"</div>
+            <div class="objection-q">
+              <span class="obj-chip obj">OBJEÇÃO</span>
+              "Vou falar com meu sócio / minha equipe primeiro."
+            </div>
+            <div class="objection-a">
+              <span class="obj-chip resp">RESPOSTA</span>
+              <span>"Faz todo sentido. Posso te mandar uma proposta resumida que você repassa pra ele(a)? Assim fica mais fácil de avaliar juntos. <strong>Qual o melhor e-mail ou WhatsApp pra eu enviar ainda hoje?</strong>"</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="section-divider"></div>
-
-    <div class="footer">
+    <footer class="footer">
       <div class="footer-brand">Agência <span>Lopes</span></div>
-      <div class="footer-note">Uso interno · Script de Diagnóstico v1.1</div>
-    </div>
+      <div class="footer-note">USO INTERNO · SCRIPT DE DIAGNÓSTICO V2.0</div>
+    </footer>
 
+    </div>
   </main>
 </div>
 
 <script>
-  function setActive(el) {
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    el.classList.add('active');
+  // ===== STATE (persisted in localStorage) =====
+  const STORAGE_KEY = 'diagLopes.v2';
+  const TOTAL_PHASES = 7;
+  const TOTAL_QUESTIONS = 19;
+
+  let state = { phases: new Array(TOTAL_PHASES).fill(false), questions: {} };
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (saved && Array.isArray(saved.phases)) state = saved;
+  } catch (e) { /* estado limpo */ }
+
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
   }
 
-  // Smooth scroll + nav highlight on scroll
+  // ===== PROGRESS =====
+  const phaseBtns = document.querySelectorAll('.progress-step-btn');
+  const progressText = document.getElementById('progressText');
+  const progressFill = document.getElementById('progressFill');
+  const mobileCount = document.getElementById('mobileCount');
+
+  function render() {
+    phaseBtns.forEach((btn, i) => {
+      btn.classList.remove('active', 'done');
+      if (state.phases[i]) btn.classList.add('done');
+    });
+
+    const next = state.phases.findIndex(p => !p);
+    if (next >= 0) phaseBtns[next].classList.add('active');
+
+    const phaseCount = state.phases.filter(Boolean).length;
+    const qCount = Object.values(state.questions).filter(Boolean).length;
+
+    progressText.textContent = phaseCount + '/' + TOTAL_PHASES + ' fases · ' + qCount + '/' + TOTAL_QUESTIONS + ' perguntas';
+    mobileCount.textContent = phaseCount + '/' + TOTAL_PHASES + ' fases';
+    progressFill.style.width = (phaseCount / TOTAL_PHASES * 100) + '%';
+
+    document.querySelectorAll('.q-item').forEach(item => {
+      item.classList.toggle('asked', !!state.questions[item.dataset.q]);
+    });
+  }
+
+  function markPhase(index) {
+    state.phases[index] = !state.phases[index];
+    save();
+    render();
+  }
+
+  // ===== QUESTION CHECKBOXES =====
+  document.querySelectorAll('.q-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      const id = item.dataset.q;
+      state.questions[id] = !state.questions[id];
+      save();
+      render();
+    });
+  });
+
+  // ===== RESET =====
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    state = { phases: new Array(TOTAL_PHASES).fill(false), questions: {} };
+    save();
+    render();
+  });
+
+  // ===== SIDEBAR: smooth scroll + active highlight =====
   document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', function(e) {
+    item.addEventListener('click', function (e) {
       const href = this.getAttribute('href');
       if (href && href.startsWith('#')) {
         e.preventDefault();
         const target = document.querySelector(href);
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     });
   });
 
-  // Progress tracker
-  let done = new Array(7).fill(false);
-  let currentActive = 0;
-
-  function markPhase(index) {
-    const btns = document.querySelectorAll('.progress-step-btn');
-    done[index] = !done[index];
-
-    // Mark current as active (next undone)
-    btns.forEach((btn, i) => {
-      btn.classList.remove('active', 'done');
-      if (done[i]) btn.classList.add('done');
-    });
-
-    // Find next not done to highlight
-    let next = -1;
-    for (let i = 0; i < done.length; i++) {
-      if (!done[i]) { next = i; break; }
-    }
-    if (next >= 0) btns[next].classList.add('active');
-
-    const count = done.filter(Boolean).length;
-    document.getElementById('progressText').textContent = count + ' / 7 fases';
-    document.getElementById('progressFill').style.width = (count / 7 * 100) + '%';
-  }
-
-  // Init first button as active
-  document.querySelector('.progress-step-btn').classList.add('active');
-
-  // Intersection observer for sidebar highlight
   const sections = document.querySelectorAll('.phase-section');
   const navItems = document.querySelectorAll('.nav-item');
 
-  const observer = new IntersectionObserver((entries) => {
+  const navObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         const id = entry.target.getAttribute('id');
         navItems.forEach(item => {
-          item.classList.remove('active');
-          if (item.getAttribute('href') === '#' + id) {
-            item.classList.add('active');
-          }
+          item.classList.toggle('active', item.getAttribute('href') === '#' + id);
         });
       }
     });
-  }, { threshold: 0.4 });
+  }, { threshold: 0.35 });
 
-  sections.forEach(s => observer.observe(s));
+  sections.forEach(s => navObserver.observe(s));
+
+  // ===== REVEAL ON SCROLL =====
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  render();
 </script>
 </body>
 </html>
